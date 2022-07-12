@@ -13,7 +13,7 @@ UCLASS()
 class SHOOTTHEMUP_API ASTUBaseCharacter : public ACharacter
 {
 	GENERATED_BODY()
-
+ 
 public:
 	// Sets default values for this character's properties
 	ASTUBaseCharacter( const FObjectInitializer& ObjInit );
@@ -37,6 +37,9 @@ public:
 
     UFUNCTION(BlueprintCallable, Category="Movement")
     bool IsRunning() const;
+
+    UFUNCTION(BlueprintCallable, Category="Movement")
+    float GetMovementDirection() const;
 
 private:
     bool WantsToRun = false;
