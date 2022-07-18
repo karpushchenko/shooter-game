@@ -38,15 +38,17 @@ void ASTUBaseCharacter::BeginPlay()
     // Dev checks
     check(HealthComponent);
     check(HealthTextComponent);
+    check(GetCharacterMovement());
+
+    OnHealthChanged(HealthComponent->GetHealth());
+    HealthComponent->OnDeath.AddUObject(this, &ASTUBaseCharacter::OnDeath);
+    HealthComponent->OnHealthChanged.AddUObject(this, &ASTUBaseCharacter::OnHealthChanged);
 }
 
 // Called every frame
 void ASTUBaseCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-    const auto Health = HealthComponent->GetHealth();
-    HealthTextComponent->SetText(FText::FromString(FString::Printf(TEXT("%.0f"), Health)));
 }
 
 // Called to bind functionality to input
@@ -106,4 +108,20 @@ void ASTUBaseCharacter::OnStartRunning()
 void ASTUBaseCharacter::OnStopRunning()
 {
     WantsToRun = true;
+}
+
+void ASTUBaseCharacter::OnDeath()
+{
+    UE_LOG(BaseCharacterLog, Display, TEXT("Player %s is Dead"), *GetName());
+
+    PlayAnimMontage(DeathAnimMontage);
+
+    GetCharacterMovement()->DisableMovement();
+
+    SetLifeSpan(5.0f);
+}
+
+void ASTUBaseCharacter::OnHealthChanged(float Health)
+{
+    HealthTextComponent->SetText(FText::FromString(FString::Printf(TEXT("%.0f"), Health)));
 }
